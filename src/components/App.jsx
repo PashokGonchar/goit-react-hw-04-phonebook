@@ -7,13 +7,11 @@ import { HeaderDiv, HeaderH1, HeaderH2 } from './AppNew.styled';
 import Notiflix from 'notiflix';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    const contactsList = JSON.parse(localStorage.getItem('contacts'));
+    return contactsList || [];
+  });
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    const contactsList = JSON.parse(localStorage.getItem('contacts')) || [];
-    setContacts(contactsList);
-  }, [])
   
   useEffect(() => {
       localStorage.setItem('contacts', JSON.stringify(contacts))
