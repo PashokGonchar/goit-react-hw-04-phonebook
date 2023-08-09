@@ -13,7 +13,6 @@ export const App = () => {
   useEffect(() => {
     const contactsList = JSON.parse(localStorage.getItem('contacts')) || [];
     setContacts(contactsList);
-    console.log(contactsList)
   }, [])
   
   useEffect(() => {
@@ -38,7 +37,7 @@ export const App = () => {
       id: nanoid(),
     };
 
-    setContacts(prevContacts => [...prevContacts, newContact]);
+    setContacts(contacts => [...contacts, newContact]);
   };
 
   const handleFilterChange = e => {
@@ -53,8 +52,8 @@ export const App = () => {
   };
 
   const deleteContact = contactId => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== contactId)
+    setContacts(contacts =>
+      contacts.filter(contact => contact.id !== contactId)
     );
   };
 
