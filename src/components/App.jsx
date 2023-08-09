@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import ContactFormPage from './ContactForm/ContactForm';
 import ContactListPage from './ContactsList/ContactsList';
@@ -9,6 +9,17 @@ import Notiflix from 'notiflix';
 export const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    const contactsList = JSON.parse(localStorage.getItem('contacts')) || [];
+    setContacts(contactsList);
+    console.log(contactsList)
+  }, [])
+  
+  useEffect(() => {
+      localStorage.setItem('contacts', JSON.stringify(contacts))
+  },[contacts])
+
 
   const handleSubmit = (name, number) => {
     if (contacts.some(contact => contact.name === name)) {
