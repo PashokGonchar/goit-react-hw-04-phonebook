@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import ContactFormPage from './ContactForm/ContactForm';
 import ContactListPage from './ContactsList/ContactsList';
@@ -6,15 +6,11 @@ import Filter from './ContactFilters/ContactFilters';
 import { HeaderDiv, HeaderH1, HeaderH2 } from './AppNew.styled';
 import Notiflix from 'notiflix';
 
-export class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
+export const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [filter, setFilter] = useState('');
 
-  handleSubmit = (name, number) => {
-    const { contacts } = this.state;
-
+  const handleSubmit = (name, number) => {
     if (contacts.some(contact => contact.name === name)) {
       Notiflix.Notify.info(`${name} вже існує!`);
       return;
@@ -31,51 +27,41 @@ export class App extends Component {
       id: nanoid(),
     };
 
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-      name: '',
-      number: '',
-    }));
+    setContacts(prevContacts => [...prevContacts, newContact]);
   };
 
-  handleFilterChange = e => {
-    this.setState({ filter: e.target.value });
+  const handleFilterChange = e => {
+    setFilter(e.target.value);
   };
 
-  getFilteredContacts = () => {
-    const { contacts, filter } = this.state;
+  const getFilteredContacts = () => {
     const normalizedFilter = filter.toLowerCase();
     return contacts.filter(contacts =>
       contacts.name.toLowerCase().includes(normalizedFilter)
     );
   };
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+  const deleteContact = contactId => {
+    setContacts(prevContacts =>
+      prevContacts.filter(contact => contact.id !== contactId)
+    );
   };
 
-  render() {
-    const filteredContacts = this.getFilteredContacts();
-    const isHiddenFilterList = this.state.contacts.length === 0;
+  const filteredContacts = getFilteredContacts();
+  const isHiddenFilterList = contacts.length === 0;
 
-    return (
-      <HeaderDiv>
-        <HeaderH1>Phonebook</HeaderH1>
-        <ContactFormPage onSubmit={this.handleSubmit} />
-        <HeaderH2>Contacts</HeaderH2>
-        {!isHiddenFilterList && (
-          <Filter
-            value={this.state.filter}
-            onChange={this.handleFilterChange}
-          />
-        )}
-        <ContactListPage
-          contacts={filteredContacts}
-          onDeleteContact={this.deleteContact}
-        />
-      </HeaderDiv>
-    );
-  }
-}
+  return (
+    <HeaderDiv>
+      <HeaderH1>Phonebook</HeaderH1>
+      <ContactFormPage onSubmit={handleSubmit} />
+      <HeaderH2>Contacts</HeaderH2>
+      {!isHiddenFilterList && (
+        <Filter value={filter} onChange={handleFilterChange} />
+      )}
+      <ContactListPage
+        contacts={filteredContacts}
+        onDeleteContact={deleteContact}
+      />
+    </HeaderDiv>
+  );
+};
